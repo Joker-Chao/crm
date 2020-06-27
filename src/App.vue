@@ -54,7 +54,7 @@
 </template>
 
 <script>
-import {http,listForRouter,info} from './api/api.js'
+import {http,menuList,user} from './api/api.js'
 export default {
   name:'app',
   data(){
@@ -82,7 +82,7 @@ export default {
   methods: {
     // 获取菜单栏
     getMenu(){
-      this.$http.get(http+listForRouter).then((data) => {
+      this.$http.get(http+menuList).then((data) => {
         // console.log(data.data.data)
         this.$store.commit('setMenu',data.data.data)
       },(err) => {
@@ -91,7 +91,7 @@ export default {
     },
     // 获取当前账号信息
     getInfo(){
-      this.$http.get(http+info).then((data) => {
+      this.$http.get(http+user).then((data) => {
         // console.log(data.data.data)
         this.$store.commit('setInfo',data.data.data)
       },(err) => {
@@ -114,7 +114,7 @@ export default {
 }
 .el-menu-vertical-demo:not(.el-menu--collapse) {
   width: 200px;
-  min-height: 400px;
+  min-height: 700px;
 }
 .el-menu-vertical-demo{
   min-height: 500px;

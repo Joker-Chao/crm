@@ -7,7 +7,7 @@ import 'element-ui/lib/theme-chalk/index.css';
 import router from './router/index.js'
 import App from './App.vue'
 
-把echarts添加到vue实例中
+// 把echarts添加到vue实例中
 Vue.prototype.$echarts = echarts
 
 Vue.use(resource)
