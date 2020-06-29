@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog title="添加用户" :visible.sync="cellType" @close="closeCell" v-if="dept">{{this.form}}
+    <el-dialog title="添加用户" :visible.sync="cellType" @close="closeCell" v-if="dept">
       <el-form ref="form" :model="form" label-width="80px">
         <el-form-item label="账户">
           <el-input v-model="form.account"></el-input>
@@ -45,7 +45,7 @@
 </template>
 
 <script>
-  import {http,deptList,addUser} from '@/api/api.js'
+  import {http,deptList,editUser} from '@/api/api.js'
   export default{
     props: ['type','changeCell','tname'],
     data(){
@@ -76,9 +76,6 @@
       }
     },
     mounted(){
-      if(!localStorage.token) {
-        return location.href="./login.html"
-      }
       this.getdeptList()
     },
     methods:{
@@ -92,19 +89,14 @@
         if(flag){
           this.form.deptid = this.form.deptid[this.form.deptid.length - 1]
           this.form.birthday = this.setTimeType(this.form.birthday)
-          this.$http.post(http+addUser,this.form,{emulateJSON:true}).then((data) => {
-            if(data.data.msg === '成功'){
+          this.$http.post(http+editUser,this.form,{emulateJSON:true}).then((data) => {
+            if(data.data.success){
               this.cellType = false
-              this.clearTable()
+            }else{
+              console.error(data.data.message)
             }
           },(err) => {
-            console.log(err)
-            if(err.data.message === '该用户已经注册'){
-              this.$message.error('该用户已经注册');
-              this.clearTable()
-            }else{
-              location.href = './login.html'
-            }
+            console.error(err.data.message)
           })
         }else{
           this.$message({
@@ -114,6 +106,7 @@
         }
       },
       setTimeType(time){
+        time = new Date(time)
         return time.getFullYear() + '-' + (time.getMonth() + 1) + '-' + time.getDate()
       },
       childrenIsNull(data){
@@ -128,10 +121,13 @@
       },
       getdeptList(){
         this.$http.get(http+deptList).then((data) => {
-          this.dept = this.childrenIsNull(data.data.data)
-
+          if(data.data.success){
+            this.dept = this.childrenIsNull(data.data.data)
+          }else{
+            console.error(data.data.message)
+          }
         },(err) => {
-          location.href = './login.html'
+          console.error(err.data.message)
         })
       },
       closeCell(){

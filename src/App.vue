@@ -4,7 +4,7 @@
       <!-- 导航 -->
       <el-aside style="width: auto;">
         <el-menu
-        default-active="1-4-1"
+        :default-active="$route.path"
         class="el-menu-vertical-demo"
         :collapse="isCollapse"
         v-if="$store.state.menu.menu && $store.state.user.info"
@@ -76,9 +76,6 @@ export default {
     }
   },
   mounted(){
-    if(!localStorage.token) {
-      return location.href="./login.html"
-    }
     this.getMenu()
     this.getInfo()
 		this.getOperationList()
@@ -87,36 +84,44 @@ export default {
     // 获取菜单栏
     getMenu(){
       this.$http.get(http+menuList).then((data) => {
-        // console.log(data.data.data)
-        this.$store.commit('setMenu',data.data.data)
+        if(data.data.success){
+          this.$store.commit('setMenu',data.data.data)
+        }else{
+          console.error(data.data.message)
+        }
       },(err) => {
-        location.href = './login.html'
+        console.error(err.data.message)
       })
     },
     // 获取当前账号信息
     getInfo(){
       this.$http.get(http+user).then((data) => {
-        // console.log(data.data.data)
-        this.$store.commit('setInfo',data.data.data)
+        if(data.data.success){
+          this.$store.commit('setInfo',data.data.data)
+        }else{
+          console.error(data.data.message)
+        }
       },(err) => {
-        location.href = './login.html'
+        console.error(err.data.message)
       })
     },
 		// 获取功能项信息
 		getOperationList() {
 			this.$http.get(http + operationList).then((data) => {
-				const res = data.data.data
-				const result = {}
-				res.forEach(item => {
-					item.children.forEach(val => {
-						this.$set(result, val.url, val.children)
-					})
-				})
-				this.$store.commit('setMenuList', result)
-				// console.log(result)
-				// console.log(this.$store.state.user.menuList[this.$route.path])
+        const res = data.data.data
+        const result = {}
+        if(data.data.success){
+          res.forEach(item => {
+            item.children.forEach(val => {
+              this.$set(result, val.url, val.children)
+            })
+          })
+          this.$store.commit('setMenuList', result)
+        }else{
+          console.error(data.data.message)
+        }
 			}, (err) => {
-				location.href = "./login.html"
+				console.error(err.data.message)
 			})
 		}
   }

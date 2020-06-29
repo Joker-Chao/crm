@@ -60,10 +60,17 @@
           this.$message.error('两次密码不一致');
         }else{
           this.$http.post(http+updatePwd,this.pwd,{emulateJSON:true}).then((data) => {
-            console.log(data.data)
-            this.dialogFormVisible = false
+            if(data.data.success){
+              this.$message({
+                message: '修改成功',
+                type: 'success'
+              });
+              this.dialogFormVisible = false
+            }else{
+              console.error(data.data.message)
+            }            
           },(err) => {
-            location.href = './login.html'
+            console.error(err.data.message)
           })
         }
       }

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog title="分配角色" :visible.sync="cellType" @close="closeCell">{{userInfo}}
+    <el-dialog title="分配角色" :visible.sync="cellType" @close="closeCell">
       <el-form ref="form" :model="form" label-width="80px" v-if="roleInfo">
         <el-form-item label="选择角色">
           <el-select v-model="form.roleIds" placeholder="请选择">
@@ -43,36 +43,30 @@
       }
     },
     mounted(){
-      if(!localStorage.token) {
-        return location.href="./login.html"
-      }
       this.getRoleInfo()
     },
     methods:{
       btnRole(){
         let flag = true
-        for(let i in this.formType){
+        for(let i in this.form){
           if(this.form[i] === ''){
             flag = false
           }
         }
         if(flag){
+          this.form.userId = this.userInfo.id
           this.$http.get(http+setRole,{
-            params: this.from
+            params: this.form
           }).then((data) => {
-            if(data.data.msg === '成功'){
+            if(data.data.success){
               this.cellType = false
-              this.clearTable()
+            }else{
+              console.error(data.data.message)
             }
           },(err) => {
-            console.log(err)
-            // if(err.data.message === '该用户已经注册'){
-            //   this.$message.error('该用户已经注册');
-            //   this.clearTable()
-            // }else{
-            //   location.href = './login.html'
-            // }
+            console.error(err.data.message)
           })
+          delete this.form.userId
         }else{
           this.$message({
             message: '请输入完整的信息',
@@ -86,12 +80,13 @@
             idUser: this.$store.state.user.info.profile.id
           }
         }).then((data) => {
-          console.log(data.data.data.treeData)
           if(data.data.success){
             this.roleInfo = data.data.data
+          }else{
+            console.error(data.data.message)
           }
         },(err) => {
-          // location.href = './login.html'
+          console.error(err.data.message)
         })
       },
       closeCell(){

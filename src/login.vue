@@ -1,14 +1,14 @@
 <template>
-  <div id="">
+  <div id="login">
     <div class="login-warpper">
-      <el-form ref="form" :model="login" label-width="80px">
+      <el-form ref="form" :model="login" label-width="50px">
         <el-form-item label="账号">
           <el-input v-model="login.user"></el-input>
         </el-form-item>
         <el-form-item label="密码">
           <el-input v-model="login.pwd"></el-input>
         </el-form-item>
-        <el-form-item>
+        <el-form-item style="text-align: right;margin-right: 50px;">
           <el-button type="primary" @click="onSubmit">登录</el-button>
         </el-form-item>
       </el-form>
@@ -41,10 +41,9 @@
             username: this.login.user,
             password: this.login.pwd
           },{emulateJSON:true}).then((data) => {
-            console.log(data)
             if(data.data.msg == '用户名或密码错误'){
               this.$message.error('用户名或密码错误');
-            }else if(data.data.msg == '成功'){
+            }else if(data.data.success){
               localStorage.token = data.data.data.token
               location.href = './index.html'
             }
@@ -59,7 +58,10 @@
 
 <style scoped>
   .login-warpper{
-    width: 500px;
-    margin: 150px auto;
+    width: 450px;
+    margin: 300px auto;
+    padding: 30px 10px 0;
+    border: 1px solid aqua;
+    background-color: #f7f7f7;
   }
 </style>

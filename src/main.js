@@ -14,14 +14,23 @@ Vue.use(resource)
 Vue.use(ElementUI);
 
 //判断用户是否登录
-if(localStorage.token){
-  // 登录成功
-  // 设置请求头
-  Vue.http.headers.common['Authorization'] = localStorage.token
-}else{
-  // 登录失败
-  location.href = './login.html'
-}
+
+//拦截器
+Vue.http.interceptors.push((request,next) => {
+	if(localStorage.token){
+		// 设置token请求头
+	  Vue.http.headers.common['Authorization'] = localStorage.token
+	}else{
+	  // 登录失败
+	  location.href = './login.html'
+	}
+  next((response) => {
+    if(response.status === 401){
+      location.href = './login.html'
+    }
+    return response
+  })
+})
 
 new Vue({
   el: '#app',

@@ -68,7 +68,7 @@
       </el-pagination>
     </div>
     <!-- 功能项对话框 -->
-    <div>  
+    <div>
       <mgr-add :type="btnTyep['mgrAdd']" :changeCell="showAdd" :tname="'mgrAdd'" v-show="btnTyep['mgrAdd']"></mgr-add>
       <mgr-update :type="btnTyep['mgrEdit']" :changeCell="showAdd" :tname="'mgrEdit'" :userInfo="cellData" v-show="btnTyep['mgrEdit']"></mgr-update>
       <set-role :type="btnTyep['mgrSetRole']" :changeCell="showAdd" :tname="'mgrSetRole'" :userInfo="cellData" v-show="btnTyep['mgrSetRole']"></set-role>
@@ -91,7 +91,6 @@
         btnTyep: {  //功能对话框状态
           mgrAdd: false, //添加用户
           mgrEdit: false, //修改用户
-          mgrDelete: false, //删除用户
           mgrSetRole: false  //分配角色
         },
         cellData: '', //被点击的单元格
@@ -104,15 +103,13 @@
       SetRole
     },
     mounted() {
-      if(!localStorage.token) {
-        return location.href="./login.html"
-      }
       this.getUserlist(1)
     },
     methods: {
       //功能项的对话框回调
       showAdd(val){
         this.getUserlist(this.currentPage)
+        this.cellData = ''
         this.btnTyep[val] = false
       },
       //点击选中的用户
@@ -129,27 +126,30 @@
             this.$message.error('请选择你需要操作的用户');
           }else{
             if(val === 'mgrDelete'){
-              this.$confirm('确定要删除该用户吗?', '提示', {
+              this.$confirm('确定要删除' + this.cellData.name + '吗?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
               }).then(() => {
-                this.$http.delete(http+editUser,{userId:this.cellData.id}).then(() => {
-                  this.$message({
-                    type: 'success',
-                    message: '删除成功!'
-                  });
+                this.$http.delete(http+editUser,{
+                  params : {
+                    userId:this.cellData.id
+                  }
+                }).then(() => {
+                  if(data.data.success){
+                    this.$message({
+                      type: 'success',
+                      message: '删除成功!'
+                    });
+                    this.getUserlist(this.currentPage)
+                    this.cellData = ''
+                  }else{
+                    console.error(data.data.message)
+                  }
                 },(err) => {
-                  console.log(err)
-                  // location.href = './login.html'
+                  console.error(err.data.message)
                 })
-
-              }).catch(() => {
-                this.$message({
-                  type: 'info',
-                  message: '已取消删除'
-                });
-              });
+              })
             }else{
               this.btnTyep[val] = true
             }
@@ -160,6 +160,7 @@
       reset(){
         this.names = ''
         this.total = 0
+        this.cellData = ''
         this.changePage(1)
       },
       changePage(page){
@@ -174,11 +175,14 @@
           name: this.names
         }
         this.$http.get(http + userList,{params}).then((data) => {
-          this.tableData = data.data.data.records
-          this.total = data.data.data.total
-          // console.log(data.data.data)
+          if(data.data.success){
+            this.tableData = data.data.data.records
+            this.total = data.data.data.total
+          }else{
+            console.error(data.data.message)
+          }
         },(err) => {
-          location.href = './login.html'
+          console.error(err.data.message)
         })
       }
     }
