@@ -8,6 +8,9 @@
   import {http,articleList,articleNum} from '../api/api.js'
   export default {
     mounted() {
+      if(!localStorage.token) {
+        return location.href="./login.html"
+      }
       this.getArticleData()
     },
     methods:{

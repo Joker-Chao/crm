@@ -54,7 +54,7 @@
 </template>
 
 <script>
-import {http,menuList,user} from './api/api.js'
+import {http,operationList,menuList,user} from './api/api.js'
 export default {
   name:'app',
   data(){
@@ -76,8 +76,12 @@ export default {
     }
   },
   mounted(){
+    if(!localStorage.token) {
+      return location.href="./login.html"
+    }
     this.getMenu()
     this.getInfo()
+		this.getOperationList()
   },
   methods: {
     // 获取菜单栏
@@ -97,7 +101,24 @@ export default {
       },(err) => {
         location.href = './login.html'
       })
-    }
+    },
+		// 获取功能项信息
+		getOperationList() {
+			this.$http.get(http + operationList).then((data) => {
+				const res = data.data.data
+				const result = {}
+				res.forEach(item => {
+					item.children.forEach(val => {
+						this.$set(result, val.url, val.children)
+					})
+				})
+				this.$store.commit('setMenuList', result)
+				// console.log(result)
+				// console.log(this.$store.state.user.menuList[this.$route.path])
+			}, (err) => {
+				location.href = "./login.html"
+			})
+		}
   }
 }
 </script>

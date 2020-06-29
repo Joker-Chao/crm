@@ -16,8 +16,16 @@ const articleList = '/channel/list'
 const articleNum = '/article/articlebychannel'
 // 获取用户列表
 const userList = '/user/list'
-
-
+// 获取部门信息列表
+const deptList = '/dept/list'
+// 添加用户
+const editUser = '/user'
+// 修改用户
+const editUserStatus = '/user/changeStatus'
+// 获取角色
+const getRole = '/role/roleTreeListByIdUser'
+// 分配角色
+const setRole = '/user/setRole'
 
 export {
   http,
@@ -28,5 +36,10 @@ export {
   updatePwd,
   articleList,
   articleNum,
-  userList
+  userList,
+  deptList,
+  editUser,
+  editUserStatus,
+  getRole,
+  setRole
 }

@@ -1,6 +1,10 @@
 <template>
   <div v-if="$store.state.user.menuList">
-    <el-button type="primary" v-for="item in $store.state.user.menuList[this.$route.path]" :key="item.id" v-if="item.statusName === '启用'">
+    <el-button type="primary"
+    v-for="item in $store.state.user.menuList[this.$route.path]"
+    :key="item.id"
+    v-if="item.statusName === '启用'"
+    @click="btn(item.code)">
       {{item.name}}
     </el-button>
     <el-row style="padding: 10px 0;">
@@ -15,7 +19,7 @@
       </el-col>
     </el-row>
     <div v-if="tableData">
-      <el-table :data="tableData" style="width: 100%">
+      <el-table :data="tableData" style="width: 100%" @cell-click="cellTable" :highlight-current-row="true">
         <el-table-column type="expand">
           <template slot-scope="props">
             <el-form label-position="left" inline class="demo-table-expand">
@@ -63,31 +67,106 @@
         @current-change="changePage">
       </el-pagination>
     </div>
+    <!-- 功能项对话框 -->
+    <div>  
+      <mgr-add :type="btnTyep['mgrAdd']" :changeCell="showAdd" :tname="'mgrAdd'" v-show="btnTyep['mgrAdd']"></mgr-add>
+      <mgr-update :type="btnTyep['mgrEdit']" :changeCell="showAdd" :tname="'mgrEdit'" :userInfo="cellData" v-show="btnTyep['mgrEdit']"></mgr-update>
+      <set-role :type="btnTyep['mgrSetRole']" :changeCell="showAdd" :tname="'mgrSetRole'" :userInfo="cellData" v-show="btnTyep['mgrSetRole']"></set-role>
+    </div>
+
   </div>
 </template>
 
 <script>
-  import {http,operationList,userList} from '@/api/api.js'
+  import {http,userList,editUser} from '@/api/api.js'
+  import MgrAdd from './MgrAdd.vue'
+  import MgrUpdate from './MgrUpdate.vue'
+  import SetRole from './SetRole.vue'
   export default {
     data() {
       return {
         tableData: [], //用户列表
-        total: '', //总页数
-        names: '' //搜索的名字
+        total: 0, //总页数
+        names: '', //搜索的名字
+        btnTyep: {  //功能对话框状态
+          mgrAdd: false, //添加用户
+          mgrEdit: false, //修改用户
+          mgrDelete: false, //删除用户
+          mgrSetRole: false  //分配角色
+        },
+        cellData: '', //被点击的单元格
+        currentPage: 1
       }
     },
+    components:{
+      MgrAdd,
+      MgrUpdate,
+      SetRole
+    },
     mounted() {
-      this.getOperationList()
+      if(!localStorage.token) {
+        return location.href="./login.html"
+      }
       this.getUserlist(1)
     },
     methods: {
+      //功能项的对话框回调
+      showAdd(val){
+        this.getUserlist(this.currentPage)
+        this.btnTyep[val] = false
+      },
+      //点击选中的用户
+      cellTable(row){
+        if(row === this.cellData) return
+        this.cellData = row
+      },
+      // 功能项点击
+      btn(val){
+        if(val === 'mgrAdd'){
+          this.btnTyep[val] = true
+        }else{
+          if(this.cellData === ''){
+            this.$message.error('请选择你需要操作的用户');
+          }else{
+            if(val === 'mgrDelete'){
+              this.$confirm('确定要删除该用户吗?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+              }).then(() => {
+                this.$http.delete(http+editUser,{userId:this.cellData.id}).then(() => {
+                  this.$message({
+                    type: 'success',
+                    message: '删除成功!'
+                  });
+                },(err) => {
+                  console.log(err)
+                  // location.href = './login.html'
+                })
+
+              }).catch(() => {
+                this.$message({
+                  type: 'info',
+                  message: '已取消删除'
+                });
+              });
+            }else{
+              this.btnTyep[val] = true
+            }
+          }
+        }
+      },
+      //重置
       reset(){
         this.names = ''
-        this.getUserlist(1)
+        this.total = 0
+        this.changePage(1)
       },
       changePage(page){
-        this.getUserlist(page)
+        this.currentPage = page
+        this.getUserlist(this.currentPage)
       },
+      //获取用户信息
       getUserlist(page){
         const params = {
           page,
@@ -97,25 +176,9 @@
         this.$http.get(http + userList,{params}).then((data) => {
           this.tableData = data.data.data.records
           this.total = data.data.data.total
-          console.log(data.data.data)
+          // console.log(data.data.data)
         },(err) => {
           location.href = './login.html'
-        })
-      },
-      getOperationList() {
-        this.$http.get(http + operationList).then((data) => {
-          const res = data.data.data
-          const result = {}
-          res.forEach(item => {
-            item.children.forEach(val => {
-              this.$set(result, val.url, val.children)
-            })
-          })
-          this.$store.commit('setMenuList', result)
-          // console.log(result)
-          // console.log(this.$store.state.user.menuList[this.$route.path])
-        }, (err) => {
-          location.href = "./login.html"
         })
       }
     }
