@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog title="分配角色" :visible.sync="cellType" @close="closeCell">
+    <el-dialog title="分配角色" :visible.sync="cellType" @close="changeCell(tname)" @open="getRoleInfo">
       <el-form ref="form" :model="form" label-width="80px" v-if="roleInfo">
         <el-form-item label="选择角色">
           <el-select v-model="form.roleIds" placeholder="请选择">
@@ -28,7 +28,7 @@
     data(){
       return{
         cellType: this.type,
-        form: {  //添加用户所需数据
+        form: {  //角色所需数据
           roleIds: this.userInfo.roleid
         },
         roleInfo: ''
@@ -41,9 +41,6 @@
       userInfo(newVal){
         this.form.roleIds = newVal.roleid
       }
-    },
-    mounted(){
-      this.getRoleInfo()
     },
     methods:{
       btnRole(){
@@ -61,7 +58,7 @@
             if(data.data.success){
               this.cellType = false
             }else{
-              console.error(data.data.message)
+              this.$message.error(data.data.message)
             }
           },(err) => {
             console.error(err.data.message)
@@ -83,26 +80,11 @@
           if(data.data.success){
             this.roleInfo = data.data.data
           }else{
-            console.error(data.data.message)
+            this.$message.error(data.data.message)
           }
         },(err) => {
           console.error(err.data.message)
         })
-      },
-      closeCell(){
-        this.clearTable()
-        this.changeCell(this.tname)
-      },
-      clearTable(){
-        for(let key in this.form){
-          if(key === 'sex'){
-            this.form[key] = 1
-          }else if(key === 'status'){
-            this.form[key] = 0
-          }else{
-            this.form[key] = ''
-          }
-        }
       }
     }
   }

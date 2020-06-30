@@ -67,7 +67,7 @@
               });
               this.dialogFormVisible = false
             }else{
-              console.error(data.data.message)
+              this.$message.error(data.data.message)
             }            
           },(err) => {
             console.error(err.data.message)

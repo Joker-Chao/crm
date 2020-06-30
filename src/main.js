@@ -4,6 +4,7 @@ import echarts from 'echarts'
 import store from './store/index.js'
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
+import 'default-passive-events'
 import router from './router/index.js'
 import App from './App.vue'
 

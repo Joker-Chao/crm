@@ -13,17 +13,26 @@
     methods:{
       getArticleData(){
         Promise.all([this.$http.get(http+articleList),this.$http.get(http+articleNum)]).then((data) => {
-          //获取文章类型
-          const articleListData = data[0].data.data.map((res) => {
-            return res.name
-          })
-          // 获取文章数量
-          const articleNumData = data[1].data.data.map((res) => {
-            return res.articles
-          })
+          let articleListData,articleNumData
+					if(data[0].data.success){
+						//获取文章类型
+						articleListData = data[0].data.data.map((res) => {
+						  return res.name
+						})
+					}else{
+						this.$message.error(data[0].data.message)
+					}
+          if(data[1].data.success){
+            // 获取文章数量
+            articleNumData = data[1].data.data.map((res) => {
+              return res.articles
+            })
+          }else{
+						this.$message.error(data[1].data.message)
+					}
           this.viewEcharts(articleListData,articleNumData)
         },(err) => {
-          location.href = './login.html'
+          console.error(err.data.message)
         })
       },
       viewEcharts(arr1,arr2){

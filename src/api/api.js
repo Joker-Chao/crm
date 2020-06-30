@@ -26,6 +26,14 @@ const editUserStatus = '/user/changeStatus'
 const getRole = '/role/roleTreeListByIdUser'
 // 分配角色
 const setRole = '/user/setRole'
+//（根据角色名称搜索）角色列表
+const roleList = '/role/list'
+//根据角色id修改角色
+const editRole = '/role'
+//根据角色id获取菜单树
+const menuTree = '/menu/menuTreeListByRoleId'
+//根据角色id配置菜单权限
+const savePermisson = '/role/savePermisson'
 
 export {
   http,
@@ -41,5 +49,9 @@ export {
   editUser,
   editUserStatus,
   getRole,
-  setRole
+  setRole,
+  roleList,
+  editRole,
+  menuTree,
+  savePermisson
 }

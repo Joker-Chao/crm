@@ -126,7 +126,12 @@
             this.$message.error('请选择你需要操作的用户');
           }else{
             if(val === 'mgrDelete'){
-              this.$confirm('确定要删除' + this.cellData.name + '吗?', '提示', {
+              console.log(typeof this.cellData.status)
+              if(this.cellData.status === 3){
+                this.$message.error(this.cellData.name + '已经被删除了，不能再进行删除操作')
+                return
+              }
+              this.$confirm('确定要删除用户' + this.cellData.name + '吗?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
@@ -135,7 +140,7 @@
                   params : {
                     userId:this.cellData.id
                   }
-                }).then(() => {
+                }).then((data) => {
                   if(data.data.success){
                     this.$message({
                       type: 'success',
@@ -144,7 +149,7 @@
                     this.getUserlist(this.currentPage)
                     this.cellData = ''
                   }else{
-                    console.error(data.data.message)
+                    this.$message.error(data.data.message)
                   }
                 },(err) => {
                   console.error(err.data.message)
@@ -179,7 +184,7 @@
             this.tableData = data.data.data.records
             this.total = data.data.data.total
           }else{
-            console.error(data.data.message)
+            this.$message.error(data.data.message)
           }
         },(err) => {
           console.error(err.data.message)

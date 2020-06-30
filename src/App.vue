@@ -87,7 +87,7 @@ export default {
         if(data.data.success){
           this.$store.commit('setMenu',data.data.data)
         }else{
-          console.error(data.data.message)
+          this.$message.error(data.data.message)
         }
       },(err) => {
         console.error(err.data.message)
@@ -99,7 +99,7 @@ export default {
         if(data.data.success){
           this.$store.commit('setInfo',data.data.data)
         }else{
-          console.error(data.data.message)
+          this.$message.error(data.data.message)
         }
       },(err) => {
         console.error(err.data.message)
@@ -118,7 +118,7 @@ export default {
           })
           this.$store.commit('setMenuList', result)
         }else{
-          console.error(data.data.message)
+          this.$message.error(data.data.message)
         }
 			}, (err) => {
 				console.error(err.data.message)
