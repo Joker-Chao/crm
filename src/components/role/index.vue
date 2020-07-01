@@ -12,7 +12,7 @@
         <el-input v-model="names"></el-input>
       </el-col>
       <el-col :span="2" style="text-align: center;">
-        <el-button type="primary" @click="getUserlist(1)">搜索</el-button>
+        <el-button type="primary" @click="getRoleList()">搜索</el-button>
       </el-col>
       <el-col :span="2" style="text-align: center;">
         <el-button type="primary" @click="reset">重置</el-button>
@@ -32,7 +32,7 @@
     <div>
       <role-add :type="btnTyep['roleAdd']" :changeCell="showAdd" :tname="'roleAdd'" v-show="btnTyep['roleAdd']"></role-add>
       <role-update :type="btnTyep['roleEdit']" :changeCell="showAdd" :tname="'roleEdit'" :userInfo="cellData" v-show="btnTyep['roleEdit']"></role-update>
-      <set-permisson :type="btnTyep['roleSetAuthority']" :changeCell="showAdd" :tname="'roleSetAuthority'" :userInfo="cellData" v-show="btnTyep['roleSetAuthority']"></set-permisson>
+      <set-permission :type="btnTyep['roleSetAuthority']" :changeCell="showAdd" :tname="'roleSetAuthority'" :userInfo="cellData" v-show="btnTyep['roleSetAuthority']"></set-permission>
     </div>
 
   </div>
@@ -42,7 +42,7 @@
   import {http,roleList,editRole} from '@/api/api.js'
   import RoleAdd from './RoleAdd.vue'
   import RoleUpdate from './RoleUpdate.vue'
-  import SetPermisson from './SetPermisson.vue'
+  import SetPermission from './SetPermission.vue'
   export default {
     data() {
       return {
@@ -59,7 +59,7 @@
     components:{
       RoleAdd,
       RoleUpdate,
-      SetPermisson
+      SetPermission
     },
     mounted() {
       this.getRoleList()
@@ -82,7 +82,7 @@
           this.btnTyep[val] = true
         }else{
           if(this.cellData === ''){
-            this.$message.error('请选择你需要操作的用户');
+            this.$message.error('请选择你需要操作的角色');
           }else{
             if(val === 'roleDelete'){
               this.$confirm('确定要删除角色' + this.cellData.name + '吗?', '提示', {
@@ -108,6 +108,8 @@
                 },(err) => {
                   console.error(err.data.message)
                 })
+              }).catch(() => {
+                this.cellData = ''
               })
             }else{
               this.btnTyep[val] = true
@@ -119,6 +121,7 @@
       reset(){
         this.names = ''
         this.cellData = ''
+        this.getRoleList()
       },
       //获取角色信息
       getRoleList(){
@@ -127,6 +130,7 @@
         }
         this.$http.get(http + roleList,{params}).then((data) => {
           if(data.data.success){
+            console.log(data.data)
             this.tableData = data.data.data
           }else{
             this.$message.error(data.data.message)

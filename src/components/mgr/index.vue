@@ -126,7 +126,6 @@
             this.$message.error('请选择你需要操作的用户');
           }else{
             if(val === 'mgrDelete'){
-              console.log(typeof this.cellData.status)
               if(this.cellData.status === 3){
                 this.$message.error(this.cellData.name + '已经被删除了，不能再进行删除操作')
                 return
@@ -154,6 +153,8 @@
                 },(err) => {
                   console.error(err.data.message)
                 })
+              }).catch(() => {
+                this.cellData = ''
               })
             }else{
               this.btnTyep[val] = true

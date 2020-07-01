@@ -1,10 +1,10 @@
 <template>
   <div>
-    <el-dialog title="分配权限" :visible.sync="cellType" @close="changeCell(tname)" @open="getMenuTree">
-      <div v-if="permissonInfo && checkedIds">
+    <el-dialog title="分配权限" :visible.sync="cellType" @close="changeCell(tname)" @open="getMenuTree">{{checkedIds}}
+      <div v-if="permissionInfo && checkedIds">
         <el-tree
-          ref="permissonTree"
-          :data="permissonInfo"
+          ref="permissionTree"
+          :data="permissionInfo"
           show-checkbox
           node-key="id"
           :default-expanded-keys="checkedIds"
@@ -21,13 +21,13 @@
 </template>
 
 <script>
-  import {http,menuTree,savePermisson} from '@/api/api.js'
+  import {http,menuTree,savePermission} from '@/api/api.js'
   export default{
     props: ['type','changeCell','tname','userInfo'],
     data(){
       return{
         cellType: this.type,
-        permissonInfo: '', //权限信息
+        permissionInfo: '', //权限信息
         checkedIds: '',  //当前已有的权限
         defaultProps:{
           children: 'children',
@@ -42,12 +42,14 @@
     },
     methods:{
       btnRole(){
-        const checkNodes = [...this.$refs.permissonTree.getCheckedKeys(),...this.$refs.permissonTree.getHalfCheckedKeys()]
-        this.$http.post(http+savePermisson,{
+        const checkNodes = [...this.$refs.permissionTree.getCheckedKeys(),...this.$refs.permissionTree.getHalfCheckedKeys()]
+        this.$http.post(http+savePermission,{
             roleId: this.userInfo.id,
-            permissions: JSON.stringify(checkNodes)
+            permissions: checkNodes.toString()
         },{emulateJSON:true}).then((data) => {
           if(data.data.success){
+            this.checkedIds = ''
+            this.permissionInfo = ''
             this.cellType = false
           }else{
             this.$message.error(data.data.message)
@@ -63,7 +65,7 @@
           }
         }).then((data) => {
           if(data.data.success){
-            this.permissonInfo = data.data.data.treeData
+            this.permissionInfo = data.data.data.treeData
             this.checkedIds = data.data.data.checkedIds
           }else{
             this.$message.error(data.data.message)

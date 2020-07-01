@@ -20,6 +20,21 @@ const routes = [
     path: '/role',
     name: 'Role',
     component: () => import('@/components/role/index.vue')
+  },
+  {
+    path: '/dept',
+    name: 'Dept',
+    component: () => import('@/components/dept/index.vue')
+  },
+  {
+    path: '/menu',
+    name: 'Menu',
+    component: () => import('@/components/menu/index.vue')
+  },
+  {
+    path: '/dict',
+    name: 'Dict',
+    component: () => import('@/components/dict/index.vue')
   }
 ]
 
