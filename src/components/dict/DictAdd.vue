@@ -1,25 +1,25 @@
 <template>
   <div>
-    <el-dialog title="添加菜单" :visible.sync="cellType" @close="changeCell(tname)">
+    <el-dialog title="添加菜单" :visible.sync="cellType" @close="cloesCell">
       <el-form ref="form" :model="form" label-width="100px">
         <el-form-item label="字典名称">
           <el-input v-model="form.dictName"></el-input>
         </el-form-item>
-        <el-row v-if="status.length > 0">
+        <el-row v-if="dictDetial.length > 0">
           <el-form-item label="字典详情"></el-form-item>
-          <div v-for="(item,index) in status">
-            <el-col :span="10">
+          <div v-for="(item,index) in dictDetial">
+            <el-col :span="9">
               <el-form-item label="状态码">
-                <el-input v-model="item[idnex].status"></el-input>
+                <el-input v-model="item.status"></el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="10">
+            <el-col :span="9">
               <el-form-item label="含义">
-                <el-input v-model="item[idnex].content"></el-input>
+                <el-input v-model="item.content"></el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="4">
-              <el-button type="danger">移除</el-button>
+            <el-col :span="6" style="text-align: center;">
+              <el-button type="danger" @click="dictDetial.splice(index,1)">移除</el-button>
             </el-col>
           </div>
         </el-row>
@@ -42,15 +42,10 @@
     data() {
       return {
         cellType: this.type,
-        form: { //添加菜单所需数据
-          name: '', //菜单名称
-          code: '', //编码
-          component: '', //组件
-          url: '', //链接标识
-          status: '1', //状态
-          ismenu: '0' //是否是菜单
+        form: { //添加字典所需数据
+          dictName: ''   //字典名字
         },
-        status: []
+        dictDetial: []
       }
     },
     watch: {
@@ -59,8 +54,22 @@
       }
     },
     methods: {
-      addStatus() {
+      cloesCell(){
+        this.form.dictName = ''   //字典名字
+        this.dictDetial = []
+        this.cellType = false
 
+        this.changeCell(this.tname)
+      },
+      addStatus() {
+        this.dictDetial.push({status: '',content: ''})
+      },
+      changeTypeDict(){
+        let str = ''
+        for(let i in this.dictDetial){
+          str += this.dictDetial[i].status + ':' + this.dictDetial[i].content + ';'
+        }
+        return str
       },
       addMenu() {
         let flag = true
@@ -70,29 +79,33 @@
           }
         }
         if (flag) {
-          //排序
-          this.form.num = 0
-          this.$http.post(http + dict, JSON.stringify(this.form), {
-            emulateJSON: true
-          }).then((data) => {
+          if(this.dictDetial.length === 0){
+            this.$message({
+              message: '请添加字典详情',
+              type: 'warning'
+            })
+            return
+          }
+          for (let i in this.dictDetial) {
+            if (this.dictDetial[i].status === '' || this.dictDetial[i].content === '') {
+              this.$message({
+                message: '请输入字典详情内容',
+                type: 'warning'
+              })
+              return
+            }
+          }
+       
+          const res = `?dictName=${this.form.dictName}&dictValues=${this.changeTypeDict(this.dictDetial)}`
+          this.$http.post(http + dict + res).then((data) => {
             if (data.data.success) {
-              this.form = { //添加菜单所需数据
-                name: '', //菜单名称
-                code: '', //编码
-                component: '', //组件
-                url: '', //链接标识
-                status: '1', //状态
-                isMenu: '0' //是否是菜单
-              }
-              this.cellType = false
+              this.cloesCell()
             } else {
               this.$message.error(data.data.message)
             }
           }, (err) => {
             console.error(err.data.message)
           })
-          delete this.form.pcode
-          delete this.form.num
         } else {
           this.$message({
             message: '请输入完整的信息',
@@ -109,5 +122,8 @@
     text-align: center;
     font-weight: 700;
     letter-spacing: 5px;
+  }
+  /deep/ .el-form-item {
+    margin-bottom: 10px;
   }
 </style>

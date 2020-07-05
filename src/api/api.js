@@ -49,6 +49,12 @@ const dictList = '/dict/list'
 // 修改字典
 const dict = '/dict'
 
+// 获取栏目信息
+const channelList = '/channel/list'
+// 修改字典
+const channel = '/channel'
+
+
 export {
   http,
   login,
@@ -71,5 +77,7 @@ export {
   editDept,
   editMenu,
   dictList,
-  dict
+  dict,
+  channelList,
+  channel
 }

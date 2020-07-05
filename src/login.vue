@@ -59,7 +59,7 @@
 <style scoped>
   .login-warpper{
     width: 450px;
-    margin: 300px auto;
+    margin: 200px auto;
     padding: 30px 10px 0;
     border: 1px solid aqua;
     background-color: #f7f7f7;

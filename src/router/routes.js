@@ -35,6 +35,16 @@ const routes = [
     path: '/dict',
     name: 'Dict',
     component: () => import('@/components/dict/index.vue')
+  },
+  {
+    path: '/channel',
+    name: 'Channel',
+    component: () => import('@/components/channel/index.vue')
+  },
+  {
+    path: '/cms/articleEdit',
+    name: 'Addarticle',
+    component: () => import('@/components/addarticle/index.vue')
   }
 ]
 

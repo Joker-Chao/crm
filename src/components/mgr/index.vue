@@ -19,7 +19,7 @@
       </el-col>
     </el-row>
     <div v-if="tableData">
-      <el-table :data="tableData" style="width: 100%" @cell-click="cellTable" :highlight-current-row="true">
+      <el-table :data="tableData" style="width: 100%" @cell-click="cellTable" :highlight-current-row="!!cellData">
         <el-table-column type="expand">
           <template slot-scope="props">
             <el-form label-position="left" inline class="demo-table-expand">

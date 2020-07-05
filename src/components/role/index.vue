@@ -19,7 +19,7 @@
       </el-col>
     </el-row>
     <div v-if="tableData">
-      <el-table :data="tableData" style="width: 100%" @cell-click="cellTable" :highlight-current-row="true">
+      <el-table :data="tableData" style="width: 100%" @cell-click="cellTable" :highlight-current-row="!!cellData">
         <el-table-column label="角色名称" prop="name">
         </el-table-column>
         <el-table-column label="部门名称" prop="deptName">

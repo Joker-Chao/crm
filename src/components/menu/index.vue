@@ -3,7 +3,7 @@
     <el-button type="primary" v-for="item in $store.state.user.menuList[this.$route.path]" :key="item.id" v-if="item.statusName === '启用'" @click="btn(item.code)">
       {{item.name}}
     </el-button>
-    <el-table :data="tableData" style="width: 100%;top: 20px;" row-key="id" @cell-click="cellTable" :highlight-current-row="true" border :tree-props="{children: 'children'}">
+    <el-table :data="tableData" style="width: 100%;top: 20px;" row-key="id" @cell-click="cellTable" :highlight-current-row="!!cellData" border :tree-props="{children: 'children'}">
       <el-table-column prop="name" sortable label="菜单名称">
       </el-table-column>
       <el-table-column prop="url" sortable label="链接标识">
