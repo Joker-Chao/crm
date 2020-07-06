@@ -3,12 +3,12 @@
     <div class="title">
       <el-form ref="form" :model="form" label-width="80px">
         <el-row :gutter="20">
-          <el-col :span="18">
+          <el-col :span="14">
             <el-form-item label="标题">
               <el-input v-model="form.title" placeholder="标题"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="10">
             <el-form-item label="选择类型">
               <el-select v-model="form.idChannel" placeholder="类型" v-if="optChannel">
                 <el-option v-for="item in optChannel" :label="item.name" :key="item.id" :value="item.name"></el-option>
@@ -56,6 +56,7 @@
         this.editor.customConfig.customUploadImg = (files, insert) => {
           // files 是 input 中选中的文件列表
           // insert 是获取图片 url 后，插入到编辑器的方法
+          console.log(files.row)
           let arr = []
           for(let i in files){
             arr.push(publicImg + files[i].name)

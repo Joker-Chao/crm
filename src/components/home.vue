@@ -5,14 +5,14 @@
 </template>
 
 <script>
-  import {http,articleList,articleNum} from '../api/api.js'
+  import {http,channelList,articleNum} from '../api/api.js'
   export default {
     mounted() {
       this.getArticleData()
     },
     methods:{
       getArticleData(){
-        Promise.all([this.$http.get(http+articleList),this.$http.get(http+articleNum)]).then((data) => {
+        Promise.all([this.$http.get(http+channelList),this.$http.get(http+articleNum)]).then((data) => {
           let articleListData,articleNumData
 					if(data[0].data.success){
 						//获取文章类型
