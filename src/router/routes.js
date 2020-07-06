@@ -42,9 +42,19 @@ const routes = [
     component: () => import('@/components/channel/index.vue')
   },
   {
+    path: '/article',
+    name: 'Article',
+    component: () => import('@/components/article/index.vue')
+  },
+  {
     path: '/cms/articleEdit',
     name: 'Addarticle',
     component: () => import('@/components/addarticle/index.vue')
+  },
+  {
+    path: '/fileMgr',
+    name: 'FileMgr',
+    component: () => import('@/components/filemgr/index.vue')
   }
 ]
 

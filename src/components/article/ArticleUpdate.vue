@@ -1,14 +1,14 @@
 <template>
   <div>
-    <div class="title">
-      <el-form ref="form" :model="form" label-width="80px">
+    <el-dialog title="修改文章" :visible.sync="cellType" @close="cloesCell" @open="openCell">{{form}}
+      <el-form ref="form" :model="form" label-width="100px">
         <el-row :gutter="20">
-          <el-col :span="18">
+          <el-col :span="14">
             <el-form-item label="标题">
               <el-input v-model="form.title" placeholder="标题"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="10">
             <el-form-item label="选择类型">
               <el-select v-model="form.idChannel" placeholder="类型" v-if="optChannel">
                 <el-option v-for="item in optChannel" :label="item.name" :key="item.id" :value="item.name"></el-option>
@@ -17,9 +17,9 @@
           </el-col>
         </el-row>
       </el-form>
-    </div>
+    </el-dialog>
     <div>
-      <div ref="editor" class="editor"></div>
+      <div ref="editor" class="editor" v-model="editor"></div>
     </div>
     <div style="margin: 20px; text-align: right;">
       <el-button type="primary" @click="uptxt">提交</el-button>
@@ -28,25 +28,43 @@
 </template>
 
 <script>
-  import wangeditor from 'wangeditor'
-  import {http,channelList,file,article,publicImg} from '@/api/api.js'
-  export default{
-    data(){
-      return{
-        form: {
+  import {
+    http,
+    dict
+  } from '@/api/api.js'
+  export default {
+    props: ['type', 'changeCell', 'tname', 'userInfo'],
+    data() {
+      return {
+        cellType: this.type,
+        formType: {
           title: '', //标题
           idChannel: '' //类型
         },
         optChannel: '',
         editor: '',
-        file: ''
+        file: '',
+        form: ''
       }
     },
-    mounted(){
-      this.fileLoad()
-      this.getChannelList()
+    watch: {
+      type(newVal) {
+        this.cellType = newVal
+      },
+      userInfo(newVal){
+        let json = {}
+        for(let i in this.formType){
+          this.$set(json,i,this.userInfo[i].toString())
+        }
+        this.form = json
+      }
     },
     methods: {
+      openCell() {
+        this.$nextTick(() => {
+          this.fileLoad()
+        })
+      },
       fileLoad(){
         this.editor = new wangeditor(this.$refs.editor);
         this.editor.customConfig.showLinkImg = false
@@ -89,6 +107,10 @@
             console.error(err.data.message)
         })
       },
+      cloesCell() {
+        this.cellType = false
+        this.changeCell(this.tname)
+      },
       uptxt(){
         let flag = true
         for (let i in json) {
@@ -98,6 +120,7 @@
         }
         if (flag) {
           const json = {
+            id: this.userInfo.id,
             author: this.$store.state.user.info.profile.name,
             content: this.editor.txt.html().replace(/\%/g,'%25'),
             idChannel: this.form.idChannel,
@@ -136,15 +159,13 @@
 </script>
 
 <style scoped>
-  /deep/ .el-form-item__label{
+  /deep/ .el-dialog__header {
     text-align: center;
+    font-weight: 700;
+    letter-spacing: 5px;
   }
-  .editor{
-    position: relative;
-    z-index: 1;
-  }
-  .title{
-    position: relative;
-    z-index: 2;
+
+  /deep/ .el-form-item {
+    margin-bottom: 10px;
   }
 </style>

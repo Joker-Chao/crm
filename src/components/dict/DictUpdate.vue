@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog title="修改字典" :visible.sync="cellType" @close="cloesCell" @open="openCell">{{userInfo}}
+    <el-dialog title="修改字典" :visible.sync="cellType" @close="cloesCell" @open="openCell">
       <el-form ref="form" :model="form" label-width="100px">
         <el-form-item label="字典名称">
           <el-input v-model="form.dictName"></el-input>

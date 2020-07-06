@@ -1,5 +1,7 @@
 // 服务器地址
 const http = 'http://39.101.217.150:8086'
+//文章静态地址
+const publicImg = 'http://39.101.217.150/statics/'
 // 登录地址
 const login = '/account/login'
 
@@ -22,9 +24,11 @@ const editUserStatus = '/user/changeStatus'
 const updatePwd = '/account/updatePwd'
 
 // 获取文章分类
-const articleList = '/channel/list'
+const articleList = '/article/list'
 // 获取文章数量
 const articleNum = '/article/articlebychannel'
+// 提交文章
+const article = '/article'
 
 // 获取部门信息列表
 const deptList = '/dept/list'
@@ -54,6 +58,12 @@ const channelList = '/channel/list'
 // 修改字典
 const channel = '/channel'
 
+//获取文件信息
+const fileMgrList = '/fileMgr/list'
+//下载图片
+const fileDownload = '/file/download'
+//修改文件
+const file = '/file'
 
 export {
   http,
@@ -79,5 +89,10 @@ export {
   dictList,
   dict,
   channelList,
-  channel
+  channel,
+  file,
+  article,
+  fileMgrList,
+  fileDownload,
+  publicImg
 }
