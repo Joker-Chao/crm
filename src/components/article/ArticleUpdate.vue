@@ -83,40 +83,27 @@
         this.editor.customConfig.customUploadImg = (files, insert) => {
           // files 是 input 中选中的文件列表
           // insert 是获取图片 url 后，插入到编辑器的方法
-          let arr = []
-          for (let i in files) {
-            arr.push(publicImg + files[i].name)
+          let d = new FormData
+          for(let i in files){
+            d.append('file',files[i])
           }
-          this.file = arr
-          insert(arr)
-
+          this.$http.post(http + file,d,{
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              'Authorization': localStorage.token
+            }
+          }).then((data) => {
+            if(data.data.success){
+               insert(publicImg + data.data.data.originalFileName)//data.data.data.realFileName
+              }else{
+                this.$message.error(data.data.message)
+              }
+            },(err) => {
+              console.error(err.data.message)
+          })
         }
         this.editor.create();
         this.editor.txt.html(this.userInfo.content)
-      },
-      upFile() {
-        if (this.file == '') {
-          return
-        }
-        let d = new FormData
-        for (let i in this.file) {
-          d.append('file', this.file[i])
-        }
-        this.$http.post(http + file, d, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'Authorization': localStorage.token
-          }
-        }).then((data) => {
-          if (data.data.success) {
-            this.$message.success('上传成功')
-            this.cellType = false
-          } else {
-            this.$message.error(data.data.message)
-          }
-        }, (err) => {
-          console.error(err.data.message)
-        })
       },
       uptxt() {
         const json = {
@@ -135,9 +122,8 @@
         if (flag) {
           this.$http.post(http + article, JSON.stringify(json)).then((data) => {
             if (data.data.success) {
-              this.upFile()
               this.$message({
-                message: '提交成功',
+                message: '修改成功',
                 type: 'success'
               });
               this.cellType = false

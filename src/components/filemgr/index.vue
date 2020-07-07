@@ -6,7 +6,7 @@
     </el-upload>
     <el-row style="padding: 10px 0;">
       <el-col :span="20">
-        <el-input v-model="names"></el-input>
+        <el-input v-model="names" placeholder="文件名"></el-input>
       </el-col>
       <el-col :span="2" style="text-align: center;">
         <el-button type="primary" @click="getFileList(1)">搜索</el-button>
@@ -15,7 +15,7 @@
         <el-button type="primary" @click="reset">重置</el-button>
       </el-col>
     </el-row>
-    <div v-if="tableData">
+    <div v-if="tableData" style="padding: 20px 0;">
       <el-table :data="tableData" style="width: 100%">
         <el-table-column label="id" prop="id">
         </el-table-column>
@@ -95,6 +95,11 @@
       },
       //获取用户信息
       getFileList(page) {
+        const loading = this.$loading({
+          lock: true,
+          text: '加载中...',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
         const params = {
           page,
           limit: 6,
@@ -112,6 +117,9 @@
         }, (err) => {
           console.error(err.data.message)
         })
+        setTimeout(() => {
+          loading.close();
+        }, 1000);
       }
     }
   }

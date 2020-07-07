@@ -4,16 +4,18 @@
       @click="btn(item.code)">
       {{item.name}}
     </el-button>
-    <el-table :data="tableData" row-key="id" style="width: 100%;margin-top:20px;" border :highlight-current-row="!!cellData" @cell-click="cellTable">
-      <el-table-column prop="name" label="分类名称">
-      </el-table-column>
-      <el-table-column prop="code" label="类型编码">
-      </el-table-column>
-      <el-table-column prop="id" label="分类id">
-      </el-table-column>
-      <el-table-column prop="modifyTime" label="更新时间">
-      </el-table-column>
-    </el-table>
+    <div v-if="tableData" style="padding: 20px 0;">
+      <el-table :data="tableData" row-key="id" style="width: 100%;margin-top:20px;" border :highlight-current-row="!!cellData" @cell-click="cellTable">
+        <el-table-column prop="name" label="分类名称">
+        </el-table-column>
+        <el-table-column prop="code" label="类型编码">
+        </el-table-column>
+        <el-table-column prop="id" label="分类id">
+        </el-table-column>
+        <el-table-column prop="modifyTime" label="更新时间">
+        </el-table-column>
+      </el-table>
+    </div>
     <!-- 功能项对话框 -->
     <div>
       <channel-add :type="btnTyep['channeladd']" :changeCell="showAdd" :tname="'channeladd'" v-show="btnTyep['channeladd']"></channel-add>
@@ -104,6 +106,11 @@
       },
       //获取字典信息
       getChannelList() {
+        const loading = this.$loading({
+          lock: true,
+          text: '加载中...',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
         const params = {
           name: this.names
         }
@@ -118,6 +125,9 @@
         }, (err) => {
           console.error(err.data.message)
         })
+        setTimeout(() => {
+          loading.close();
+        }, 1000);
       }
     }
   }

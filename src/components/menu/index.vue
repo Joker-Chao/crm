@@ -115,6 +115,11 @@
       },
       //获取菜单信息
       getMenuList() {
+        const loading = this.$loading({
+          lock: true,
+          text: '加载中...',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
         this.$http.get(http + operationList).then((data) => {
           if (data.data.success) {
             this.tableData = data.data.data
@@ -124,6 +129,9 @@
         }, (err) => {
           console.error(err.data.message)
         })
+        setTimeout(() => {
+          loading.close();
+        }, 1000);
       }
     }
   }

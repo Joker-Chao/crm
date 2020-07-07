@@ -1,24 +1,20 @@
 <template>
   <div>
-    <div class="title">
+    <div class="title" style="padding: 20px 0">
       <el-form ref="form" :model="form" label-width="80px">
         <el-row :gutter="20">
-          <el-col :span="14">
-            <el-form-item label="标题">
-              <el-input v-model="form.title" placeholder="标题"></el-input>
-            </el-form-item>
+          <el-col :span="18">
+            <el-input v-model="form.title" placeholder="标题"></el-input>
           </el-col>
-          <el-col :span="10">
-            <el-form-item label="选择类型">
-              <el-select v-model="form.idChannel" placeholder="类型" v-if="optChannel">
-                <el-option v-for="item in optChannel" :label="item.name" :key="item.id" :value="item.name"></el-option>
-              </el-select>
-            </el-form-item>
+          <el-col :span="6">
+            <el-select v-model="form.idChannel" placeholder="选择类型" v-if="optChannel">
+              <el-option v-for="item in optChannel" :label="item.name" :key="item.id" :value="item.id"></el-option>
+            </el-select>
           </el-col>
         </el-row>
       </el-form>
     </div>
-    <div>
+    <div style="background-color: #fff;">
       <div ref="editor" class="editor"></div>
     </div>
     <div style="margin: 20px; text-align: right;">
@@ -56,41 +52,35 @@
         this.editor.customConfig.customUploadImg = (files, insert) => {
           // files 是 input 中选中的文件列表
           // insert 是获取图片 url 后，插入到编辑器的方法
-          console.log(files.row)
-          let arr = []
+          let d = new FormData
           for(let i in files){
-            arr.push(publicImg + files[i].name)
+            d.append('file',files[i])
           }
-          this.file = arr
-          insert(arr)
-
+          this.$http.post(http + file,d,{
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              'Authorization': localStorage.token
+            }
+          }).then((data) => {
+            if(data.data.success){
+               insert(publicImg + data.data.data.originalFileName)//data.data.data.realFileName
+              }else{
+                this.$message.error(data.data.message)
+              }
+            },(err) => {
+              console.error(err.data.message)
+          })
         }
         this.editor.create();
       },
-      upFile(){
-        if(this.file == ''){
-          return
-        }
-        let d = new FormData
-        for(let i in this.file){
-          d.append('file',this.file[i])
-        }
-        this.$http.post(http + file,d,{
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'Authorization': localStorage.token
-          }
-        }).then((data) => {
-          if(data.data.success){
-              this.$message.success('上传成功')
-            }else{
-              this.$message.error(data.data.message)
-            }
-          },(err) => {
-            console.error(err.data.message)
-        })
-      },
       uptxt(){
+        const json = {
+          author: this.$store.state.user.info.profile.name,
+          content: this.editor.txt.html().replace(/\%/g,'%25'),
+          idChannel: this.form.idChannel,
+          title: this.form.title
+        }
+        console.log(json)
         let flag = true
         for (let i in json) {
           if (json[i] === '') {
@@ -98,16 +88,12 @@
           }
         }
         if (flag) {
-          const json = {
-            author: this.$store.state.user.info.profile.name,
-            content: this.editor.txt.html().replace(/\%/g,'%25'),
-            idChannel: this.form.idChannel,
-            Title: this.form.title
-          }
           this.$http.post(http + article,JSON.stringify(json)).then((data) => {
             if(data.data.success){
-              console.log(data.data.data)
-              this.upFile()
+              this.$message({
+                message: '提交成功',
+                type: 'success'
+              });
             }else{
               this.$message.error(data.data.message)
             }
@@ -122,6 +108,11 @@
         }
       },
       getChannelList (){
+        const loading = this.$loading({
+          lock: true,
+          text: '加载中...',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
         this.$http.get(http + channelList).then((data) => {
           if(data.data.success){
             this.optChannel = data.data.data
@@ -131,6 +122,9 @@
         },(err) => {
           console.error(err.data.message)
         })
+        setTimeout(() => {
+          loading.close();
+        }, 1000);
       }
     }
   }

@@ -3,14 +3,16 @@
     <el-button type="primary" v-for="item in $store.state.user.menuList[this.$route.path]" :key="item.id" v-if="item.statusName === '启用'" @click="btn(item.code)">
       {{item.name}}
     </el-button>
-    <el-table :data="tableData" style="width: 100%;top: 20px;" row-key="id" @cell-click="cellTable" :highlight-current-row="!!cellData" border :tree-props="{children: 'children'}">
-      <el-table-column prop="fullname" sortable label="部门全称">
-      </el-table-column>
-      <el-table-column prop="simplename" sortable label="部门简称">
-      </el-table-column>
-      <el-table-column prop="id" sortable label="部门id">
-      </el-table-column>
-    </el-table>
+    <div v-if="tableData" style="padding: 20px 0;">
+      <el-table :data="tableData" style="width: 100%;top: 20px;" row-key="id" @cell-click="cellTable" :highlight-current-row="!!cellData" border :tree-props="{children: 'children'}">
+        <el-table-column prop="fullname" sortable label="部门全称">
+        </el-table-column>
+        <el-table-column prop="simplename" sortable label="部门简称">
+        </el-table-column>
+        <el-table-column prop="id" sortable label="部门id">
+        </el-table-column>
+      </el-table>
+    </div>
     <!-- 功能项对话框 -->
     <div>
       <dept-add :type="btnTyep['deptAdd']" :changeCell="showAdd" :tname="'deptAdd'" :userInfo="cellData" v-show="btnTyep['deptAdd']"></dept-add>
@@ -101,6 +103,11 @@
       },
       //获取角色信息
       getDeptList() {
+        const loading = this.$loading({
+          lock: true,
+          text: '加载中...',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
         this.$http.get(http + deptList).then((data) => {
           if (data.data.success) {
             this.tableData = data.data.data
@@ -110,6 +117,9 @@
         }, (err) => {
           console.error(err.data.message)
         })
+        setTimeout(() => {
+          loading.close();
+        }, 1000);
       }
     }
   }

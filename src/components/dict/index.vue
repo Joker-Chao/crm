@@ -6,7 +6,7 @@
     </el-button>
     <el-row style="padding: 10px 0;">
       <el-col :span="20">
-        <el-input v-model="names"></el-input>
+        <el-input v-model="names" placeholder="字典名"></el-input>
       </el-col>
       <el-col :span="2" style="text-align: center;">
         <el-button type="primary" @click="getDictList()">搜索</el-button>
@@ -15,14 +15,17 @@
         <el-button type="primary" @click="reset">重置</el-button>
       </el-col>
     </el-row>
-    <el-table :data="tableData" row-key="id" style="width: 100%;margin-top:20px;" border :highlight-current-row="!!cellData" @cell-click="cellTable">
-      <el-table-column prop="name" label="名称">
-      </el-table-column>
-      <el-table-column prop="detail" label="详情">
-      </el-table-column>
-      <el-table-column prop="id" label="字典id">
-      </el-table-column>
-    </el-table>
+    <div v-if="tableData" style="padding: 20px 0;">
+      <el-table :data="tableData" row-key="id" style="width: 100%;margin-top:20px;" border :highlight-current-row="!!cellData" @cell-click="cellTable">
+        <el-table-column prop="name" label="名称">
+        </el-table-column>
+        <el-table-column prop="detail" label="详情">
+        </el-table-column>
+        <el-table-column prop="id" label="字典id">
+        </el-table-column>
+      </el-table>
+    </div>
+
     <!-- 功能项对话框 -->
     <div>
       <dict-add :type="btnTyep['dictAdd']" :changeCell="showAdd" :tname="'dictAdd'" v-show="btnTyep['dictAdd']"></dict-add>
@@ -129,6 +132,11 @@
       },
       //获取字典信息
       getDictList() {
+        const loading = this.$loading({
+          lock: true,
+          text: '加载中...',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
         const params = {
           name: this.names
         }
@@ -143,6 +151,9 @@
         }, (err) => {
           console.error(err.data.message)
         })
+        setTimeout(() => {
+          loading.close();
+        }, 1000);
       }
     }
   }

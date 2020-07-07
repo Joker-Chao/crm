@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div id="main" style="width: 800px;height:600px;"></div>
+    <div id="main" style="height:600px;padding-top: 50px;"></div>
   </div>
 </template>
 
@@ -42,16 +42,22 @@
         // 指定图表的配置项和数据
         var option = {
           title: {
-            text: '文章统计'
+            text: '文章统计',
+            textStyle: {
+              color: '#fff'
+            }
           },
           tooltip: {},
           xAxis: {
             data: arr1
           },
+          textStyle:{
+            color: '#fff'
+          },
           yAxis: {},
           series: [{
             name: '数量',
-            type: 'bar',
+            type: 'line',
             data: arr2
           }]
         };

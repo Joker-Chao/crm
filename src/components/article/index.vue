@@ -21,17 +21,19 @@
       <el-button type="primary" @click="getArticleList(1)">搜索</el-button>
       <el-button type="primary" @click="reset">重置</el-button>
     </div>
-    <el-table :data="tableData" style="width: 100%;top: 20px;" row-key="id" @cell-click="cellTable"
-      :highlight-current-row="!!cellData">
-      <el-table-column prop="id" label="id">
-      </el-table-column>
-      <el-table-column prop="title" label="标题">
-      </el-table-column>
-      <el-table-column prop="author" label="作者">
-      </el-table-column>
-      <el-table-column prop="createTime" label="创建时间">
-      </el-table-column>
-    </el-table>
+    <div v-if="tableData" style="padding: 20px 0;">
+      <el-table :data="tableData" style="width: 100%;top: 20px;" row-key="id" @cell-click="cellTable"
+        :highlight-current-row="!!cellData">
+        <el-table-column prop="id" label="id">
+        </el-table-column>
+        <el-table-column prop="title" label="标题">
+        </el-table-column>
+        <el-table-column prop="author" label="作者">
+        </el-table-column>
+        <el-table-column prop="createTime" label="创建时间">
+        </el-table-column>
+      </el-table>
+    </div>
     <div v-if="total" style="text-align: center;margin-top: 20px;">
       <el-pagination background layout="prev, pager, next" :page-size="10" :total="total" @current-change="changePage">
       </el-pagination>
@@ -134,6 +136,11 @@
       },
       //获取角色信息
       getArticleList(page) {
+        const loading = this.$loading({
+          lock: true,
+          text: '加载中...',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
         const params = {
           title: this.title,
           author: this.author,
@@ -154,6 +161,9 @@
         }, (err) => {
           console.error(err.data.message)
         })
+        setTimeout(() => {
+          loading.close();
+        }, 1000);
       }
     }
   }

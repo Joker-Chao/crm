@@ -1,6 +1,6 @@
 <template>
   <div id="login">
-    <div class="login-warpper">
+    <div style="width: 500px;padding: 10px;position: fixed;top: 50%;left: 50%;transform: translate(-50%,-50%);">
       <el-form ref="form" :model="login" label-width="50px">
         <el-form-item label="账号">
           <el-input v-model="login.user"></el-input>
@@ -45,7 +45,7 @@
               this.$message.error('用户名或密码错误');
             }else if(data.data.success){
               localStorage.token = data.data.data.token
-              location.href = './index.html'
+              location.href = './'
             }
           }),(err) => {
             this.$message.error('登录失败');
@@ -56,12 +56,20 @@
   }
 </script>
 
-<style scoped>
-  .login-warpper{
-    width: 450px;
-    margin: 200px auto;
-    padding: 30px 10px 0;
-    border: 1px solid aqua;
-    background-color: #f7f7f7;
+<style>
+  *{
+    margin: 0;
+    padding: 0;
+  }
+  html,body{
+    width: 100%;
+    height: 100%;
+  }
+  body{
+    background-image: url(assets/images/bg.jpg);
+    background-size: 100% 100%;
+  }
+  .el-form-item__label{
+    color: #fff;
   }
 </style>
